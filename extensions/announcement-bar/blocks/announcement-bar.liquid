@@ -1,0 +1,81 @@
+{% comment %}
+  {% assign avg_rating = block.settings.product.metafields.demo.avg_rating.value | round %}
+  <span style="color:{{ block.settings.colour }}">
+  {% render 'stars', rating: avg_rating %}
+  </span>
+  {% if avg_rating >= 4 %}
+  <br>
+  <img
+  src="{{ "thumbs-up.png" | asset_img_url: '15x' }}"
+  height="15"
+  width="15"
+  loading="lazy">
+  {{ 'ratings.home.recommendationText' | t }}
+  {% endif %}
+{% endcomment %}
+
+{% if block.settings.home_page_only == false or template.name == 'index' %}
+  <style>
+    .announcement-bar {
+      background-color: {{ block.settings.colour }}
+      ;
+    }
+
+    .announcement-bar--link:hover {
+      {% assign brightness = block.settings.colour | color_brightness %}
+
+      {% if brightness <= 192 %}
+        {% assign lightenAmount = 255 | minus: brightness | divided_by: 255 | times: 16 %}
+        background-color: {{ block.settings.colour | color_lighten: lightenAmount }}
+        ;
+      {% else %}
+        {% assign darkenAmount = 255 | divided_by: brightness | times: 8 %}
+        background-color: {{ block.settings.colour | color_darken: darkenAmount }}
+        ;
+      {% endif %}
+    }
+
+    .announcement-bar__message {
+      color: {{ block.settings.color_text }}
+      ;
+    }
+  </style>
+
+  <div class="announcement-bar">
+
+    <p class="announcement-bar__message">{{ block.settings.text | escape }}</p>
+
+  </div>
+
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Regular Announcement Bar",
+    "target": "body",
+    "javascript": "app.js",
+    "settings": [
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Text",
+        "default": "Promote something here"
+      }, {
+        "type": "color",
+        "id": "colour",
+        "label": "Background Colour",
+        "default": "#ff0000"
+      }, {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text Colour",
+        "default": "#fff"
+      }, {
+        "type": "checkbox",
+        "id": "home_page_only",
+        "label": "Home page only",
+        "default": true
+      }
+    ]
+  }
+{% endschema %}
